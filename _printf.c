@@ -1,48 +1,75 @@
 #include "main.h"
 
-/**
-_printf - prints anything
-@format: the format string
 
-Return: number of bytes printed
-*/
+/**
+ * _printf - Parameters for printf
+ * @format: list of arguments
+ * Return: Printed thing
+ */
+
 int _printf(const char *format, ...)
 {
-int sum = 0;
-va_list ap;
-char *p, *start;
-params_t params = PARAMS_INIT;
+	int chars;
+	va_list list;
 
-va_start(ap, format);
+	va_start(list, format);
+	if (format == NULL)
+		return (-1);
 
-if (!format || (format[0] == '%' && !format[1]))
-return (-1);
-if (format[0] == '%' && format[1] == ' ' && !format[2])
-return (-1);
-for (p = (char *)format; *p; p++)
-{
-init_params(&params, ap);
-if (*p != '%')
-{
-sum += _putchar(*p);
-continue;
+	chars = charsFormats(format, list);
+
+	va_end(list);
+	return (chars);
 }
-start = p;
-p++
-while (get_flag(p, &params)) /* while char at p is flag char */
+
+/**
+ * charsFormats - paremters printf
+ * @format: list of arguments
+ * @args: listing
+ * Return: value of print
+ */
+
+int charsFormats(const char *format, va_list args)
 {
-p++; /* next char */
+	int a, b, chars, r_val;
+
+	fmtsSpefier f_list[] = {{"c", _char}, {"s", _string},
+				{"%", _percent}, {"d", _integer}, {"i", _integer}, {NULL, NULL}
+	};
+	chars = 0;
+	for (a = 0; format[a] != '\0'; a++)
+	{
+		if (format[a] == '%')
+		{
+			for (b = 0; f_list[b].sym != NULL; b++)
+			{
+				if (format[a + 1] == f_list[b].sym[0])
+				{
+					r_val = f_list[b].f(args);
+					if (r_val == -1)
+						return (-1);
+					chars += r_val;
+					break;
+				}
+			}
+			if (f_list[b].sym == NULL && format[a + 1] != ' ')
+			{
+				if (format[a + 1] != '\0')
+				{
+					_putchar(format[a]);
+					_putchar(format[a + 1]);
+					chars = chars + 2;
 }
-p = get_width(p, &params, ap);
-p = get_precision(p, &params, ap);
-if (get_modifier(p, &params))
-p++;
-if (!get_specifier(p))
-sum += print_from_to(start, p,
-params.l_modifier || params.h_modifier ? p - 1 : 0);
-else sum += get_print_func(p, ap, &params);
-}
-_putchar(BUF_FLUSH);
-va_end(ap);
-return (sum);
+				else
+					return (-1);
+			}
+		a += 1;
+		}
+		else
+		{
+			_putchar(format[a]);
+			chars++;
+		}
+	}
+	return (chars);
 }
