@@ -1,39 +1,75 @@
 #include "main.h"
 
+
 /**
- * _printf - Receives the main string and all the necessary parameters to
- * print a formated string
- * @format: A string containing all the desired characters
- * Return: A total count of the characters printed
+ * _printf - Parameters for printf
+ * @format: list of arguments
+ * Return: Printed thing
  */
 
 int _printf(const char *format, ...)
 {
-	int printed_chars;
-	conver_t f_list[] = {
-		{"%", print_percent},
-		{"d", print_integer},
-		{"i", print_integer},
-		{"c", print_char},
-		{"s", print_string},
-		{"b", print_binary},
-		{"u", print_unsigned_integer},
-		{"o", print_octal},
-		{"x", print_hex},
-		{"X", print_HEX},
-		{"S", print_String},
-		{"p", print_pointer},
-		{"r", print_rev},
-		{"R", print_rot13},
-		{NULL, NULL},
-	};
-	va_list arg_list;
+	int chars;
+	va_list list;
 
+	va_start(list, format);
 	if (format == NULL)
 		return (-1);
 
-	va_start(arg_list, format);
-	printed_chars = format_reciever(format, f_list, arg_list);
-	va_end(arg_list);
-	return (printed_chars);
+	chars = charsFormats(format, list);
+
+	va_end(list);
+	return (chars);
+}
+
+/**
+ * charsFormats - paremters printf
+ * @format: list of arguments
+ * @args: listing
+ * Return: value of print
+ */
+
+int charsFormats(const char *format, va_list args)
+{
+	int a, b, chars, r_val;
+
+	fmtsSpefier f_list[] = {{"c", _char}, {"s", _string},
+				{"%", _percent}, {"d", _integer}, {"i", _integer}, {NULL, NULL}
+	};
+	chars = 0;
+	for (a = 0; format[a] != '\0'; a++)
+	{
+		if (format[a] == '%')
+		{
+			for (b = 0; f_list[b].sym != NULL; b++)
+			{
+				if (format[a + 1] == f_list[b].sym[0])
+				{
+					r_val = f_list[b].f(args);
+					if (r_val == -1)
+						return (-1);
+					chars += r_val;
+					break;
+				}
+			}
+			if (f_list[b].sym == NULL && format[a + 1] != ' ')
+			{
+				if (format[a + 1] != '\0')
+				{
+					_putchar(format[a]);
+					_putchar(format[a + 1]);
+					chars = chars + 2;
+}
+				else
+					return (-1);
+			}
+		a += 1;
+		}
+		else
+		{
+			_putchar(format[a]);
+			chars++;
+		}
+	}
+	return (chars);
 }
