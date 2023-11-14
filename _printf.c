@@ -1,75 +1,45 @@
 #include "main.h"
-
-
 /**
- * _printf - Parameters for printf
- * @format: list of arguments
- * Return: Printed thing
+ * _printf - is a function that selects the correct function to print.
+ * @format: identifier to look for.
+ * Return: the length of the string.
  */
-
-int _printf(const char *format, ...)
+int _printf(const char * const format, ...)
 {
-	int chars;
-	va_list list;
+	convert_match m[] = {
+		{"%s", printf_string}, {"%c", printf_char},
+		{"%%", printf_37},
+		{"%i", printf_int}, {"%d", printf_dec}, {"%r", printf_srev},
+		{"%R", printf_rot13}, {"%b", printf_bin}, {"%u", printf_unsigned},
+		{"%o", printf_oct}, {"%x", printf_hex}, {"%X", printf_HEX},
+		{"%S", printf_exclusive_string}, {"%p", printf_pointer}
+	};
 
-	va_start(list, format);
-	if (format == NULL)
+	va_list args;
+	int i = 0, j, len = 0;
+
+	va_start(args, format);
+	if (format == NULL || (format[0] == '%' && format[1] == '\0'))
 		return (-1);
 
-	chars = charsFormats(format, list);
-
-	va_end(list);
-	return (chars);
-}
-
-/**
- * charsFormats - paremters printf
- * @format: list of arguments
- * @args: listing
- * Return: value of print
- */
-
-int charsFormats(const char *format, va_list args)
-{
-	int a, b, chars, r_val;
-
-	fmtsSpefier f_list[] = {{"c", _char}, {"s", _string},
-				{"%", _percent}, {"d", _integer}, {"i", _integer}, {NULL, NULL}
-	};
-	chars = 0;
-	for (a = 0; format[a] != '\0'; a++)
+Here:
+	while (format[i] != '\0')
 	{
-		if (format[a] == '%')
+		j = 13;
+		while (j >= 0)
 		{
-			for (b = 0; f_list[b].sym != NULL; b++)
+			if (m[j].id[0] == format[i] && m[j].id[1] == format[i + 1])
 			{
-				if (format[a + 1] == f_list[b].sym[0])
-				{
-					r_val = f_list[b].f(args);
-					if (r_val == -1)
-						return (-1);
-					chars += r_val;
-					break;
-				}
+				len += m[j].f(args);
+				i = i + 2;
+				goto Here;
 			}
-			if (f_list[b].sym == NULL && format[a + 1] != ' ')
-			{
-				if (format[a + 1] != '\0')
-				{
-					_putchar(format[a]);
-					_putchar(format[a + 1]);
-					chars = chars + 2;
-}
-				else
-					return (-1);
-			}
-		a += 1;
+			j--;
 		}
-		else
-		{
-			_putchar(format[a]);
-			chars++;
-		}
+		_putchar(format[i]);
+		len++;
+		i++;
 	}
-	return (chars);
+	va_end(args);
+	return (len);
 }
