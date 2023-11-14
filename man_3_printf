@@ -1,34 +1,21 @@
-.TH man 1 "13 November 2023" "0.32" "_printf() man page"
-.Sa NAME
-.B _printf
-- prints data according to a format.
-.SH SYNOPSIS
-_printf FORMAT [ARGUMENT]...
-.SH PROTOTYPE
-int _printf(const char* format, ...);
+_PRINTF(3)
 
-.SH DESCRIPTION
-Print ARGUMENT(s) according to FORMAT, or execute according to OPTION:
+NAME
+	_printf - prints supplied string with certain operators for substitution and formatting
 
-We use the function printf() with % followed by the type of format specifier, to show the value of the variable.
-Format specifier is used during input and output. It is a way to tell the compiler what type of data is in a variable during taking input using _printf(). Some examples are %c, %d, %i, etc.
+SYNOPSIS
+	_printf FORMAT [ARGUMENTS] ...
 
-%i - substitude for a value an integer variable,
+DESCRIPTION
+        Print ARGUMENT(s) according to OPTION within the supplied FORMAT string
 
-%d - substitude for a value an integer variable decimal base 10,
+	    FORMAT controls the output to STDOUT including OPERATORS
 
-%c - substitude for a value of a character variable,
+EXAMPLES
+	_print("Alx Project %d", n);
 
-%s - substitude for a value of a string variable,
+REPORTING BUGS
+    Report _printf bugs to https://www.github.com/othman-rh/printf
 
-%% - substitude for a single '%'.
-
-.SH RETURN VALUE
-Upon successful return, This function return the number of characters written, excluding the terminating null character used to end the string.
-.SH SEE ALSO
-.I printf(3).
-.SH BUGS
-No known bugs.
-
-.SH AUTHOR
-Othman Rhajbal, Khawla Anoui.
+AUTHORS
+	Made by Othman Rhajbal and Khawla Anoui
